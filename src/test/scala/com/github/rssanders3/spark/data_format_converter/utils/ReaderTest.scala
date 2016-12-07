@@ -1,20 +1,19 @@
-package com.github.rssanders3.spark.data_format_converter
+package com.github.rssanders3.spark.data_format_converter.utils
 
 import java.io.File
 
-import com.github.rssanders3.spark.data_format_converter.utils.{Writer, Reader}
-import org.apache.spark.sql.{SaveMode, SQLContext}
+import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
-import org.scalatest.{BeforeAndAfterAll, Matchers, GivenWhenThen, FlatSpec}
+import org.scalatest.{BeforeAndAfterAll, FlatSpec, GivenWhenThen, Matchers}
 
 /**
  * Created by robertsanders on 12/1/16.
  */
-class MainTest extends FlatSpec with GivenWhenThen with Matchers with BeforeAndAfterAll {
+class ReaderTest extends FlatSpec with GivenWhenThen with Matchers with BeforeAndAfterAll {
 
   private val MASTER = "local[2]"
   private val APP_NAME = this.getClass.getSimpleName
-  private val TEST_OUTPUT_DIR = "src/test/resources/MainTest_output"
+  private val TEST_OUTPUT_DIR = "src/test/resources/test_output"
 
   private var _sc: SparkContext = _
   private var _sqlContext: SQLContext = _
@@ -53,7 +52,8 @@ class MainTest extends FlatSpec with GivenWhenThen with Matchers with BeforeAndA
 
   "Importing as text and exporting as parquet" should "work" in {
     val inputDF = Reader.read(sqlContext, "src/test/resources/text/test1.txt", null, "text")
-    Writer.write(sqlContext, inputDF, "parquet", TEST_OUTPUT_DIR + "/parquet_output", null, SaveMode.ErrorIfExists)
+    assert(inputDF.collect().length > 0)
+    println(inputDF.schema)
   }
 
 }
