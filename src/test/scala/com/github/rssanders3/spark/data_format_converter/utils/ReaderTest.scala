@@ -1,7 +1,5 @@
 package com.github.rssanders3.spark.data_format_converter.utils
 
-import java.io.File
-
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.{SparkConf, SparkContext}
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, GivenWhenThen, Matchers}
@@ -29,16 +27,6 @@ class ReaderTest extends FlatSpec with GivenWhenThen with Matchers with BeforeAn
     super.beforeAll()
     _sc = new SparkContext(conf)
     _sqlContext = new SQLContext(_sc)
-    deleteTestOutputDirContents()
-  }
-
-  def deleteTestOutputDirContents(): Unit = {
-    val deleteTestOutputDir = new File(TEST_OUTPUT_DIR)
-    if (deleteTestOutputDir.exists()) {
-      deleteTestOutputDir.listFiles().foreach(file => {
-        file.delete()
-      })
-    }
   }
 
   override def afterAll(): Unit = {
@@ -50,10 +38,9 @@ class ReaderTest extends FlatSpec with GivenWhenThen with Matchers with BeforeAn
     super.afterAll()
   }
 
-  "Importing as text and exporting as parquet" should "work" in {
+  "Importing as text " should "work" in {
     val inputDF = Reader.read(sqlContext, "src/test/resources/text/test1.txt", null, "text")
     assert(inputDF.collect().length > 0)
-    println(inputDF.schema)
   }
 
 }

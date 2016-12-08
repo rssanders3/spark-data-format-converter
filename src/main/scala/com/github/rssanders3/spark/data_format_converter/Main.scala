@@ -4,6 +4,7 @@ import com.github.rssanders3.spark.data_format_converter.utils.{Reader, Writer}
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.{SparkConf, SparkContext}
+import org.slf4j.{LoggerFactory, Logger}
 
 
 /**
@@ -11,23 +12,25 @@ import org.apache.spark.{SparkConf, SparkContext}
  */
 object Main {
 
+  val LOGGER: Logger = LoggerFactory.getLogger(MainArgs.getClass.getName)
+
   val APP_NAME: String = "SparkDataFormatConverter"
 
   def main(args: Array[String]): Unit = {
 
     if (args.contains("-help") || args.contains("--help")) {
-      println(MainArgs.argsUsage)
+      LOGGER.info(MainArgs.argsUsage)
       System.exit(0)
     }
 
     val jobArgs = MainArgs.parseJobArgs(args.toList)
     if (jobArgs == null) {
-      println(MainArgs.argsUsage)
+      LOGGER.info(MainArgs.argsUsage)
       System.exit(-1)
     }
 
     jobArgs.validate()
-    println(jobArgs)
+    LOGGER.info(jobArgs.toString())
 
     val conf = new SparkConf().setAppName(APP_NAME)
     val sc = new SparkContext(conf)

@@ -4,6 +4,7 @@ import java.security.InvalidParameterException
 import java.util
 
 import org.apache.spark.sql.SaveMode
+import org.slf4j.{LoggerFactory, Logger}
 
 
 /**
@@ -14,6 +15,8 @@ object MainArgs {
   /**
    * spark-submit data_format_converter-jar-with-dependencies.jar --inputDataType json --inputFilePath /home/cloudera/input.txt --outputDataType parquet --outputFilePath /home/cloudera/output-dfc-parquet/
    */
+
+  val LOGGER: Logger = LoggerFactory.getLogger(MainArgs.getClass.getName)
 
   val POSSIBLE_DATA_TYPES = List("text", "json", "orc", "csv", "parquet")
 
@@ -56,6 +59,8 @@ object MainArgs {
 
       if(inputDataType == null) {
         invalidMessageList.add("--inputDataType cannot be null")
+      } else if(POSSIBLE_DATA_TYPES.contains(getInputDataType())) {
+        invalidMessageList.add(s"--inputDataType value '$getInputDataType()' is invalid. Expected: $POSSIBLE_DATA_TYPES")
       }
 
       if (inputTableName == null && inputFilePath == null) {
@@ -70,6 +75,8 @@ object MainArgs {
 
       if(outputDataType == null) {
         invalidMessageList.add("--outputDataType cannot be null")
+      } else if(POSSIBLE_DATA_TYPES.contains(getOutputDataType())) {
+        invalidMessageList.add(s"--outputDataType value '$getOutputDataType()' is invalid. Expected: $POSSIBLE_DATA_TYPES")
       }
 
       if (outputTableName == null && outputFilePath == null) {
@@ -81,6 +88,14 @@ object MainArgs {
       if (invalidMessageList.size() > 0) {
         throw new InvalidParameterException("Invalid Arguments: " + invalidMessageList)
       }
+    }
+
+    def getInputDataType(): String = {
+      inputDataType.toLowerCase
+    }
+
+    def getOutputDataType(): String = {
+      outputDataType.toLowerCase
     }
 
     def getSaveMode(): SaveMode = {
